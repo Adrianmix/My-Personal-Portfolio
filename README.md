@@ -44,7 +44,7 @@ How it works:
   alongside the toggle.
 
 ## Languages
-The site now has two fully separate routes sharing one component set:
+The site has two fully separate routes sharing one component set:
 - `/` — English, LTR
 - `/fa` — Persian, RTL
 
@@ -60,8 +60,7 @@ Email addresses stay forced `dir="ltr"` even on the Persian page, since
 addresses and URLs shouldn't mirror.
 
 A language switcher (`فارسی` / `English`) sits in the header on both
-versions. Add more languages later by adding a new key to `content.ts` and
-a new `src/pages/<code>/index.astro` — no component rewrites needed.
+versions. Add more languages later by adding a new key to `content.ts`
 
 ## Run it locally
 ```bash
@@ -76,7 +75,7 @@ npm run preview  # preview the production build
 ```
 
 ## Design system
-- **Palette (monochrome, as requested):** Ink `#0B0B0C`, Paper `#F5F5F3`,
+- **Palette (monochrome):** Ink `#0B0B0C`, Paper `#F5F5F3`,
   Chalk `#FFFFFF`, Graphite `#4A4A4A`, Fog `#D8D6D2`.
 - **Type:** Bricolage Grotesque (display, playful/chunky), Instrument Sans
   (body), JetBrains Mono (labels, eyebrows, nav — a small nod to code).
@@ -98,17 +97,3 @@ src/
   scripts/      blob.ts (three.js scene)
   styles/       global.css (fonts, resets, marquee/blend utilities, RTL overrides)
 ```
-
-## What's still placeholder (tell me and I'll fill these in)
-- Real name / bio copy — in `src/i18n/content.ts`, in **both** the `en` and
-  `fa` objects
-- A real portrait photo (currently a gradient block in `About.astro`)
-- Real projects — screenshots, live demo links, and case study links, in
-  `content.ts` under `work.projects` for each language (currently 6
-  placeholder entries, 3 web / 3 visual)
-- Real email + social links (also in `content.ts`, under `contact`)
-- Favicon / any brand mark beyond the placeholder dot
-
-If your Persian is better than mine, double-check the `fa` copy in
-`content.ts` — it's a reasonable machine-assisted translation, not
-reviewed by a native speaker.
