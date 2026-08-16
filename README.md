@@ -1,4 +1,4 @@
-# Your Name — Portfolio Site (Foundation)
+# My Portfolio Site (Foundation)
 
 Astro + Tailwind + one React island + a vanilla three.js signature element.
 This is the **foundation pass**: layout, design system, responsiveness, and
