@@ -1,0 +1,46 @@
+---
+import '../styles/global.css';
+import type { Lang } from '../i18n/content';
+
+interface Props {
+  lang?: Lang;
+  title: string;
+  description: string;
+}
+
+const { lang = 'en', title, description } = Astro.props;
+const dir = lang === 'fa' ? 'rtl' : 'ltr';
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <script is:inline>
+      // Runs before first paint so there's no flash of the wrong theme.
+      // Default (no stored preference yet) is 'auto': follow the OS.
+      (function () {
+        try {
+          var pref = localStorage.getItem('theme') || 'auto';
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var isDark = pref === 'dark' || (pref === 'auto' && systemDark);
+          document.documentElement.classList.toggle('dark', isDark);
+          document.documentElement.setAttribute('data-theme', pref);
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#F5F5F3" />
+
+    <link rel="alternate" hreflang="en" href="/" />
+    <link rel="alternate" hreflang="fa" href="/fa" />
+    <link rel="alternate" hreflang="x-default" href="/" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

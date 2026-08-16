@@ -1,0 +1,18 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = content[lang];
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink text-paper/50 px-6 md:px-10 py-6 flex items-center justify-between font-mono text-[11px] uppercase tracking-widemono">
+  <span>&copy; {year} {t.footer.name}</span>
+  <a href="#top" class="hover:text-paper transition-colors duration-300">
+    {t.footer.backToTop}
+  </a>
+</footer>

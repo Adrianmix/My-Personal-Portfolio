@@ -1,0 +1,119 @@
+---
+import { content, type Lang } from '../i18n/content';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = content[lang].theme;
+
+const options = [
+  { value: 'light', label: t.light },
+  { value: 'dark', label: t.dark },
+  { value: 'auto', label: t.auto },
+] as const;
+---
+
+<div
+  class="theme-toggle inline-flex items-center gap-0.5 rounded-full border border-ink/15 p-0.5"
+  role="radiogroup"
+  aria-label={t.label}
+>
+  {options.map((opt) => (
+    <button
+      type="button"
+      data-theme-btn={opt.value}
+      role="radio"
+      aria-checked="false"
+      aria-label={opt.label}
+      title={opt.label}
+      class="theme-btn relative flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300"
+    >
+      {opt.value === 'light' && (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8" />
+          <path
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            d="M12 2.5v2.2M12 19.3v2.2M21.5 12h-2.2M4.7 12H2.5M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6M18.4 18.4l-1.6-1.6M7.2 7.2 5.6 5.6"
+          />
+        </svg>
+      )}
+      {opt.value === 'dark' && (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z"
+          />
+        </svg>
+      )}
+      {opt.value === 'auto' && (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8" />
+          <path fill="currentColor" d="M12 3.5a8.5 8.5 0 0 1 0 17Z" />
+        </svg>
+      )}
+    </button>
+  ))}
+</div>
+
+<script>
+  const STORAGE_KEY = 'theme';
+  type Pref = 'light' | 'dark' | 'auto';
+
+  function isValidPref(value: string | null): value is Pref {
+    return value === 'light' || value === 'dark' || value === 'auto';
+  }
+
+  function getStoredPref(): Pref {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return isValidPref(stored) ? stored : 'auto';
+  }
+
+  function systemPrefersDark(): boolean {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  function applyTheme(pref: Pref) {
+    const isDark = pref === 'dark' || (pref === 'auto' && systemPrefersDark());
+    document.documentElement.classList.toggle('dark', isDark);
+    document.documentElement.setAttribute('data-theme', pref);
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', isDark ? '#0F0F10' : '#F5F5F3');
+  }
+
+  function updateActiveStates(pref: Pref) {
+    document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((btn) => {
+      const active = btn.dataset.themeBtn === pref;
+      btn.setAttribute('aria-checked', String(active));
+      btn.classList.toggle('bg-ink', active);
+      btn.classList.toggle('text-paper', active);
+      btn.classList.toggle('text-graphite', !active);
+    });
+  }
+
+  function setPref(pref: Pref) {
+    localStorage.setItem(STORAGE_KEY, pref);
+    applyTheme(pref);
+    updateActiveStates(pref);
+  }
+
+  const initialPref = getStoredPref();
+  applyTheme(initialPref);
+  updateActiveStates(initialPref);
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const value = btn.dataset.themeBtn;
+      if (isValidPref(value)) setPref(value);
+    });
+  });
+
+  // While the preference is "auto", follow the OS setting live.
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (getStoredPref() === 'auto') applyTheme('auto');
+  });
+</script>

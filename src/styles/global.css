@@ -1,0 +1,135 @@
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/instrument-sans';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+/*@import '@fontsource-variable/vazirmatn';*/
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-ink: 11 11 12;
+  --color-paper: 245 245 243;
+  --color-graphite: 74 74 74;
+  --color-fog: 216 214 210;
+  --color-chalk: 255 255 255;
+}
+
+.dark {
+  color-scheme: dark;
+  /* Roles swap rather than shift: "ink" becomes the light foreground,
+     "paper" becomes the dark background. Every component already styled
+     with bg-paper/text-ink/bg-ink/text-paper reads correctly in dark mode
+     with zero markup changes, and the deliberately-inverted Contact
+     section still reads as inverted against a dark page. */
+  --color-ink: 245 245 243;
+  --color-paper: 15 15 16;
+  --color-graphite: 163 163 163;
+  --color-fog: 42 42 44;
+  --color-chalk: 26 26 28;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(var(--color-paper));
+  color: rgb(var(--color-ink));
+  font-family: '"Instrument Sans Variable"', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+::selection {
+  background: rgb(var(--color-ink));
+  color: rgb(var(--color-paper));
+}
+
+/* Visible keyboard focus everywhere, styled not suppressed */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgb(var(--color-ink));
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Infinite marquee strip used under the hero */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* The blob canvas sits behind hero type; difference blend mode
+   inverts whatever text/shapes it drifts across (the site's signature move) */
+.blob-blend {
+  mix-blend-mode: difference;
+}
+
+/* ---------------------------------------------------------------------
+   Persian / RTL support
+   Perso-Arabic script is cursive and joined, so the Latin display tricks
+   used elsewhere on the site — negative letter-spacing, wide mono
+   tracking, uppercase transforms, italics — break letterforms or simply
+   don't exist in the script. Everything below resets those for the
+   Persian route and swaps every font role to Vazirmatn, which covers
+   display, body, and label duties on its own.
+   --------------------------------------------------------------------- */
+
+html[dir='rtl'] body,
+html[dir='rtl'] .font-display,
+html[dir='rtl'] .font-body,
+html[dir='rtl'] .font-mono {
+  font-family: "Vazirmatn", sans-serif;
+}
+
+html[dir='rtl'] .font-mono {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+html[dir='rtl'] .tracking-tightest,
+html[dir='rtl'] .tracking-widemono {
+  letter-spacing: normal;
+}
+
+html[dir='rtl'] .italic {
+  font-style: normal;
+  font-weight: 500;
+}
+
+/* Persian glyphs run taller than Latin caps; the very tight Latin
+   headline leading needs a little more room so nothing clips. */
+html[dir='rtl'] .leading-\[0\.92\] {
+  line-height: 1.3;
+}
+
+/* Marquee should drift toward the start of the reading direction, i.e.
+   the opposite physical direction from the LTR version. */
+html[dir='rtl'] .marquee-track {
+  animation-direction: reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
