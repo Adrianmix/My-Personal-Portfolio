@@ -15,7 +15,7 @@ export default {
         display: ['"Bricolage Grotesque Variable"', 'sans-serif'],
         body: ['"Instrument Sans Variable"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
-        fa: ['"Vazirmatn Variable"', 'sans-serif'],
+        fa: ['"Vazirmatn Variable"', 'Tahoma', '"Segoe UI"', 'sans-serif'],
       },
       fontSize: {
         'clamp-hero': 'clamp(2.75rem, 8vw, 8rem)',

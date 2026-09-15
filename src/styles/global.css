@@ -1,9 +1,15 @@
+/* ---------------------------------------------------------------------
+   All fonts via Fontsource — self-hosted npm packages that repackage the
+   actual Google Fonts catalog files (no CDN calls, no manually-placed
+   font files to get wrong). Vazirmatn is a real Google Fonts entry
+   (OFL-licensed), so this is the reliable way to use it: one line, no
+   @font-face hand-authoring, no filename mismatches.
+   --------------------------------------------------------------------- */
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/instrument-sans';
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
-/*@import '@fontsource-variable/vazirmatn';*/
-@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+@import '@fontsource-variable/vazirmatn';
 
 @tailwind base;
 @tailwind components;
@@ -43,7 +49,7 @@ html {
 body {
   background-color: rgb(var(--color-paper));
   color: rgb(var(--color-ink));
-  font-family: '"Instrument Sans Variable"', sans-serif;
+  font-family: 'Instrument Sans Variable', sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
   transition: background-color 200ms ease, color 200ms ease;
@@ -95,7 +101,7 @@ html[dir='rtl'] body,
 html[dir='rtl'] .font-display,
 html[dir='rtl'] .font-body,
 html[dir='rtl'] .font-mono {
-  font-family: "Vazirmatn", sans-serif;
+  font-family: 'Vazirmatn Variable', Tahoma, 'Segoe UI', sans-serif;
 }
 
 html[dir='rtl'] .font-mono {
