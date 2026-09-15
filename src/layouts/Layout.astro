@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import type { Lang } from '../i18n/content';
+import Analytics from '@vercel/analytics/astro'
 
 interface Props {
   lang?: Lang;
@@ -39,6 +40,7 @@ const dir = lang === 'fa' ? 'rtl' : 'ltr';
     <link rel="alternate" hreflang="en" href="/" />
     <link rel="alternate" hreflang="fa" href="/fa" />
     <link rel="alternate" hreflang="x-default" href="/" />
+    <Analytics/>
   </head>
   <body>
     <slot />
