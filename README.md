@@ -170,17 +170,3 @@ src/
   scripts/      blob.ts (three.js scene)
   styles/       global.css (fonts, resets, marquee/blend utilities, RTL overrides)
 ```
-
-## What's still placeholder (tell me and I'll fill these in)
-- Real name / bio copy — in `src/i18n/content.ts`, in **both** the `en` and
-  `fa` objects
-- A real portrait photo (currently a gradient block in `About.astro`)
-- Real projects — screenshots, live demo links, and case study links, in
-  `content.ts` under `work.projects` for each language (currently 6
-  placeholder entries, 3 web / 3 visual)
-- Real email + social links (also in `content.ts`, under `contact`)
-- Favicon / any brand mark beyond the placeholder dot
-
-If your Persian is better than mine, double-check the `fa` copy in
-`content.ts` — it's a reasonable machine-assisted translation, not
-reviewed by a native speaker.
