@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
 import type { Lang } from '../i18n/content';
-import Analytics from '@vercel/analytics/astro'
 
 interface Props {
   lang?: Lang;
@@ -18,8 +17,6 @@ const dir = lang === 'fa' ? 'rtl' : 'ltr';
   <head>
     <meta charset="UTF-8" />
     <script is:inline>
-      // Runs before first paint so there's no flash of the wrong theme.
-      // Default (no stored preference yet) is 'auto': follow the OS.
       (function () {
         try {
           var pref = localStorage.getItem('theme') || 'auto';
@@ -35,14 +32,30 @@ const dir = lang === 'fa' ? 'rtl' : 'ltr';
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#F5F5F3" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#F7F5F9" />
 
     <link rel="alternate" hreflang="en" href="/" />
     <link rel="alternate" hreflang="fa" href="/fa" />
     <link rel="alternate" hreflang="x-default" href="/" />
-    <Analytics/>
   </head>
   <body>
+    <canvas
+      id="particle-stage"
+      data-testid="particle-stage"
+      aria-hidden="true"
+      class="fixed inset-0 w-full h-full z-[5] pointer-events-none block"
+    ></canvas>
     <slot />
+    <script>
+      import { mountParticles } from '../scripts/particles';
+
+      const canvas = document.getElementById('particle-stage') as HTMLCanvasElement | null;
+      if (canvas) {
+        mountParticles(canvas);
+      }
+    </script>
   </body>
 </html>

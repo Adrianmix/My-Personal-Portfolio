@@ -9,30 +9,38 @@ const { lang } = Astro.props;
 const t = content[lang];
 const dir = t.dir;
 const arrow = dir === 'rtl' ? '←' : '→';
-const hoverTranslate = dir === 'rtl' ? 'group-hover:-translate-x-2' : 'group-hover:translate-x-2';
+const hoverTranslate = dir === 'rtl' ? 'group-hover:-translate-x-1.5' : 'group-hover:translate-x-1.5';
 ---
 
-<section id="services" class="px-6 md:px-10 py-28 md:py-36 border-t border-ink/10">
-  <p class="font-mono text-[13px] uppercase tracking-widemono text-graphite mb-4">
-    {t.services.eyebrow}
-  </p>
-  <h2 class="font-display text-clamp-h2 tracking-tightest leading-none mb-14">
-    {t.services.title}
-  </h2>
+<section id="services" class="scroll-mt-20 px-6 md:px-10 py-24 md:py-32 border-t border-ink/10">
+  <div class="relative z-10 mx-auto max-w-7xl">
+    <p class="font-mono text-xs text-accent font-medium mb-3">
+      {t.services.eyebrow}
+    </p>
+    <h2 class="font-display text-clamp-h2 tracking-tightest leading-none mb-12 text-balance">
+      {t.services.title}
+    </h2>
 
-  <div class="divide-y divide-ink/10 border-t border-b border-ink/10">
-    {t.services.items.map((service) => (
-      <div class="group grid md:grid-cols-12 gap-4 md:gap-10 py-8 md:py-10 items-baseline">
-        <h3 class={`md:col-span-4 font-display text-2xl md:text-3xl tracking-tightest transition-transform duration-300 ease-out-quart ${hoverTranslate}`}>
-          {service.name}
-        </h3>
-        <p class="md:col-span-7 text-graphite text-sm md:text-base leading-relaxed">
-          {service.detail}
-        </p>
-        <span class="md:col-span-1 hidden md:flex justify-end font-mono text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          {arrow}
-        </span>
-      </div>
-    ))}
+    <div class="divide-y divide-ink/10 border-t border-b border-ink/10">
+      {t.services.items.map((service) => (
+        <a
+          href="#contact"
+          class="group grid md:grid-cols-12 gap-4 md:gap-10 py-8 md:py-10 items-baseline transition-colors duration-200"
+        >
+          <h3 class={`md:col-span-4 font-display text-2xl md:text-3xl tracking-tightest transition-transform duration-200 ease-out-quart group-hover:text-accent ${hoverTranslate}`}>
+            {service.name}
+          </h3>
+          <p class="md:col-span-7 text-graphite text-sm md:text-base leading-relaxed">
+            {service.detail}
+          </p>
+          <span
+            aria-hidden="true"
+            class="md:col-span-1 hidden md:flex justify-end font-mono text-lg text-graphite group-hover:text-accent opacity-40 group-hover:opacity-100 transition-all duration-200"
+          >
+            {arrow}
+          </span>
+        </a>
+      ))}
+    </div>
   </div>
 </section>

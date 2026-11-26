@@ -16,7 +16,7 @@ const options = [
 ---
 
 <div
-  class="theme-toggle inline-flex items-center gap-0.5 rounded-full border border-ink/15 p-0.5"
+  class="theme-toggle inline-flex items-center gap-0.5 rounded-full border border-ink/15 p-0.5 bg-chalk/70"
   role="radiogroup"
   aria-label={t.label}
 >
@@ -28,10 +28,10 @@ const options = [
       aria-checked="false"
       aria-label={opt.label}
       title={opt.label}
-      class="theme-btn relative flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-300"
+      class="theme-btn relative flex h-7 w-7 items-center justify-center rounded-full transition-colors duration-200"
     >
       {opt.value === 'light' && (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8" />
           <path
             stroke="currentColor"
@@ -42,7 +42,7 @@ const options = [
         </svg>
       )}
       {opt.value === 'dark' && (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
             fill="currentColor"
             d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a7 7 0 0 0 11.2 11.2Z"
@@ -50,7 +50,7 @@ const options = [
         </svg>
       )}
       {opt.value === 'auto' && (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8" />
           <path fill="currentColor" d="M12 3.5a8.5 8.5 0 0 1 0 17Z" />
         </svg>
@@ -60,14 +60,15 @@ const options = [
 </div>
 
 <script>
-  const STORAGE_KEY = 'theme';
-  type Pref = 'light' | 'dark' | 'auto';
+  import { resolveIsDark, type ThemePref } from '../utils/portfolio';
 
-  function isValidPref(value: string | null): value is Pref {
+  const STORAGE_KEY = 'theme';
+
+  function isValidPref(value: string | null): value is ThemePref {
     return value === 'light' || value === 'dark' || value === 'auto';
   }
 
-  function getStoredPref(): Pref {
+  function getStoredPref(): ThemePref {
     const stored = localStorage.getItem(STORAGE_KEY);
     return isValidPref(stored) ? stored : 'auto';
   }
@@ -76,16 +77,16 @@ const options = [
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
 
-  function applyTheme(pref: Pref) {
-    const isDark = pref === 'dark' || (pref === 'auto' && systemPrefersDark());
+  function applyTheme(pref: ThemePref) {
+    const isDark = resolveIsDark(pref, systemPrefersDark());
     document.documentElement.classList.toggle('dark', isDark);
     document.documentElement.setAttribute('data-theme', pref);
 
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', isDark ? '#0F0F10' : '#F5F5F3');
+    if (meta) meta.setAttribute('content', isDark ? '#0B0910' : '#F7F5F9');
   }
 
-  function updateActiveStates(pref: Pref) {
+  function updateActiveStates(pref: ThemePref) {
     document.querySelectorAll<HTMLButtonElement>('[data-theme-btn]').forEach((btn) => {
       const active = btn.dataset.themeBtn === pref;
       btn.setAttribute('aria-checked', String(active));
@@ -95,7 +96,7 @@ const options = [
     });
   }
 
-  function setPref(pref: Pref) {
+  function setPref(pref: ThemePref) {
     localStorage.setItem(STORAGE_KEY, pref);
     applyTheme(pref);
     updateActiveStates(pref);
@@ -112,7 +113,6 @@ const options = [
     });
   });
 
-  // While the preference is "auto", follow the OS setting live.
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (getStoredPref() === 'auto') applyTheme('auto');
   });

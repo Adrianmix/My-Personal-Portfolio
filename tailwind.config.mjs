@@ -10,6 +10,7 @@ export default {
         fog: 'rgb(var(--color-fog) / <alpha-value>)',
         paper: 'rgb(var(--color-paper) / <alpha-value>)',
         chalk: 'rgb(var(--color-chalk) / <alpha-value>)',
+        accent: 'rgb(var(--color-accent) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Bricolage Grotesque Variable"', 'sans-serif'],

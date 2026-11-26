@@ -1,10 +1,3 @@
-/* ---------------------------------------------------------------------
-   All fonts via Fontsource — self-hosted npm packages that repackage the
-   actual Google Fonts catalog files (no CDN calls, no manually-placed
-   font files to get wrong). Vazirmatn is a real Google Fonts entry
-   (OFL-licensed), so this is the reliable way to use it: one line, no
-   @font-face hand-authoring, no filename mismatches.
-   --------------------------------------------------------------------- */
 @import '@fontsource-variable/bricolage-grotesque';
 @import '@fontsource-variable/instrument-sans';
 @import '@fontsource/jetbrains-mono/400.css';
@@ -17,25 +10,22 @@
 
 :root {
   color-scheme: light;
-  --color-ink: 11 11 12;
-  --color-paper: 245 245 243;
-  --color-graphite: 74 74 74;
-  --color-fog: 216 214 210;
+  --color-ink: 17 13 24;
+  --color-paper: 247 245 249;
+  --color-graphite: 84 78 96;
+  --color-fog: 235 231 240;
   --color-chalk: 255 255 255;
+  --color-accent: 147 51 234;
 }
 
 .dark {
   color-scheme: dark;
-  /* Roles swap rather than shift: "ink" becomes the light foreground,
-     "paper" becomes the dark background. Every component already styled
-     with bg-paper/text-ink/bg-ink/text-paper reads correctly in dark mode
-     with zero markup changes, and the deliberately-inverted Contact
-     section still reads as inverted against a dark page. */
-  --color-ink: 245 245 243;
-  --color-paper: 15 15 16;
-  --color-graphite: 163 163 163;
-  --color-fog: 42 42 44;
-  --color-chalk: 26 26 28;
+  --color-ink: 245 242 249;
+  --color-paper: 11 9 16;
+  --color-graphite: 174 166 188;
+  --color-fog: 24 19 34;
+  --color-chalk: 19 15 27;
+  --color-accent: 152 56 238;
 }
 
 * {
@@ -52,49 +42,65 @@ body {
   font-family: 'Instrument Sans Variable', sans-serif;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  transition: background-color 200ms ease, color 200ms ease;
+  transition: background-color 180ms ease, color 180ms ease;
 }
 
 ::selection {
-  background: rgb(var(--color-ink));
-  color: rgb(var(--color-paper));
+  background: rgb(var(--color-accent));
+  color: #ffffff;
 }
 
-/* Visible keyboard focus everywhere, styled not suppressed */
 a:focus-visible,
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid rgb(var(--color-ink));
-  outline-offset: 4px;
-  border-radius: 2px;
+  outline: 2px solid rgb(var(--color-accent));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.text-balance {
+  text-wrap: balance;
 }
 
 /* Infinite marquee strip used under the hero */
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 28s linear infinite;
+  animation: marquee 32s linear infinite;
+}
+
+@media (min-width: 1921px) {
+  .hero-marquee-shell {
+    max-width: 1920px;
+    margin-inline: auto;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 10%,
+      #000 90%,
+      transparent 100%
+    );
+  }
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-/* The blob canvas sits behind hero type; difference blend mode
-   inverts whatever text/shapes it drifts across (the site's signature move) */
-.blob-blend {
-  mix-blend-mode: difference;
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 /* ---------------------------------------------------------------------
    Persian / RTL support
-   Perso-Arabic script is cursive and joined, so the Latin display tricks
-   used elsewhere on the site — negative letter-spacing, wide mono
-   tracking, uppercase transforms, italics — break letterforms or simply
-   don't exist in the script. Everything below resets those for the
-   Persian route and swaps every font role to Vazirmatn, which covers
-   display, body, and label duties on its own.
    --------------------------------------------------------------------- */
 
 html[dir='rtl'] body,
@@ -119,14 +125,12 @@ html[dir='rtl'] .italic {
   font-weight: 500;
 }
 
-/* Persian glyphs run taller than Latin caps; the very tight Latin
-   headline leading needs a little more room so nothing clips. */
-html[dir='rtl'] .leading-\[0\.92\] {
-  line-height: 1.3;
+html[dir='rtl'] .leading-\[0\.92\],
+html[dir='rtl'] .leading-\[0\.95\],
+html[dir='rtl'] .leading-\[0\.98\] {
+  line-height: 1.34;
 }
 
-/* Marquee should drift toward the start of the reading direction, i.e.
-   the opposite physical direction from the LTR version. */
 html[dir='rtl'] .marquee-track {
   animation-direction: reverse;
 }

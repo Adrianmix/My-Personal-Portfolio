@@ -9,43 +9,44 @@ const { lang } = Astro.props;
 const t = content[lang];
 ---
 
-<section id="about" class="bg-fog/60 px-6 md:px-10 py-28 md:py-36 border-t border-ink/10">
-  <div class="grid md:grid-cols-12 gap-10 md:gap-16">
+<section id="about" class="scroll-mt-20 bg-fog/55 px-6 md:px-10 py-24 md:py-32 border-t border-ink/10">
+  <div class="relative z-10 mx-auto max-w-7xl grid md:grid-cols-12 gap-10 md:gap-14 items-start">
     <div class="md:col-span-4">
-      <p class="font-mono text-[13px] uppercase tracking-widemono text-graphite mb-4">
+      <p class="font-mono text-xs text-accent font-medium mb-4">
         {t.about.eyebrow}
       </p>
-      <div class="aspect-[4/5] rounded-2xl bg-ink/90 relative overflow-hidden ring-1 ring-ink/10 shadow-[0_24px_80px_rgba(17,17,18,0.08)]">
-        <img
-          src="/images/mohammad-pouhassani.jpg"
-          alt="Mohammad Pouhassani portrait"
-          class="absolute inset-0 h-full w-full object-cover"
-          loading="eager"
-          decoding="async"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent"></div>
-        <p class="absolute bottom-4 start-4 font-mono text-[11px] uppercase tracking-widemono text-paper/70">
+      <figure>
+        <div class="aspect-[4/5] rounded-2xl bg-ink/90 relative overflow-hidden border border-ink/10">
+          <img
+            src="/images/mohammad-pouhassani.jpg"
+            alt={t.about.portraitAlt}
+            class="h-full w-full object-cover"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+        <figcaption class="font-mono text-xs text-graphite mt-3">
           {t.about.portraitCaption}
-        </p>
-      </div>
+        </figcaption>
+      </figure>
     </div>
 
-    <div class="md:col-span-8 flex flex-col justify-between gap-10">
-      <p class="font-display text-clamp-h3 leading-tight tracking-tightest max-w-2xl">
+    <div class="md:col-span-8 flex flex-col justify-between gap-8 md:pt-7">
+      <p class="font-display text-clamp-h3 leading-snug tracking-tightest max-w-2xl text-balance">
         {t.about.lead}
       </p>
 
-      <p class="text-graphite text-base md:text-lg leading-relaxed max-w-xl">
+      <p class="text-graphite text-base md:text-lg leading-relaxed max-w-2xl">
         {t.about.body}
       </p>
 
-      <dl class="grid grid-cols-2 gap-x-8 gap-y-6 pt-6 border-t border-ink/10">
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 pt-6 border-t border-ink/10">
         {t.about.facts.map((fact) => (
           <div>
-            <dt class="font-mono text-[11px] uppercase tracking-widemono text-graphite mb-1">
+            <dt class="font-mono text-xs text-graphite mb-1">
               {fact.label}
             </dt>
-            <dd class="font-body text-sm md:text-base">{fact.value}</dd>
+            <dd class="font-body text-sm md:text-base text-ink">{fact.value}</dd>
           </div>
         ))}
       </dl>
