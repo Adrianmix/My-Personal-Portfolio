@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { content, type Lang } from '../i18n/content';
 import {
   filterProjects,
@@ -161,6 +162,37 @@ function ImageLightbox({
   onNavigate: (nextIndex: number) => void;
 }) {
   const hasMultiple = images.length > 1;
+  const closeTimerRef = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const [isClosing, setIsClosing] = useState(false);
+
+  const requestClose = useCallback(() => {
+    if (isClosingRef.current) return;
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    isClosingRef.current = true;
+    if (reduced) {
+      onCloseRef.current();
+      return;
+    }
+    setIsClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      onCloseRef.current();
+    }, 180);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    };
+  }, []);
 
   function goPrev() {
     onNavigate(stepGalleryIndex(index, 'prev', images.length));
@@ -170,26 +202,30 @@ function ImageLightbox({
     onNavigate(stepGalleryIndex(index, 'next', images.length));
   }
 
+  const backdropAnim = isClosing ? 'modal-backdrop-out' : 'modal-backdrop-in';
+  const panelAnim = isClosing ? 'modal-panel-out' : 'modal-panel-in';
+
   return (
     <div
       dir={dir}
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-10"
+      aria-label={labels.modal.screenshots}
+      className="fixed inset-0 z-[110] flex items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] md:p-10"
     >
       <button
         type="button"
         aria-hidden="true"
         tabIndex={-1}
-        onClick={onClose}
-        className="absolute inset-0 bg-ink/85 backdrop-blur-sm"
+        onClick={requestClose}
+        className={`${backdropAnim} absolute inset-0 bg-ink/85`}
       />
 
       <button
         type="button"
-        onClick={onClose}
+        onClick={requestClose}
         aria-label={labels.modal.close}
-        className="absolute top-4 md:top-6 right-4 md:right-6 z-10 flex items-center justify-center h-10 w-10 rounded-full border border-paper/30 text-paper hover:border-paper transition-colors duration-200"
+        className={`${backdropAnim} absolute top-[max(1rem,env(safe-area-inset-top))] md:top-6 end-4 md:end-6 z-10 flex items-center justify-center h-11 w-11 rounded-full bg-ink/60 border border-paper/35 text-paper hover:border-paper transition-colors duration-200`}
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path
@@ -207,7 +243,7 @@ function ImageLightbox({
             type="button"
             onClick={goPrev}
             aria-label={labels.modal.prev}
-            className="absolute start-4 md:start-8 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full border border-paper/30 text-paper hover:border-paper transition-colors duration-200"
+            className={`${backdropAnim} absolute start-3 md:start-8 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full bg-ink/60 border border-paper/35 text-paper hover:border-paper transition-colors duration-200`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={dir === 'rtl' ? 'rotate-180' : ''}>
               <path
@@ -223,7 +259,7 @@ function ImageLightbox({
             type="button"
             onClick={goNext}
             aria-label={labels.modal.next}
-            className="absolute end-4 md:end-8 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full border border-paper/30 text-paper hover:border-paper transition-colors duration-200"
+            className={`${backdropAnim} absolute end-3 md:end-8 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full bg-ink/60 border border-paper/35 text-paper hover:border-paper transition-colors duration-200`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className={dir === 'rtl' ? 'rotate-180' : ''}>
               <path
@@ -241,11 +277,11 @@ function ImageLightbox({
       <img
         src={images[index]}
         alt=""
-        className="relative max-w-[92vw] max-h-[85vh] object-contain rounded-lg"
+        className={`${panelAnim} relative max-w-[92vw] max-h-[82dvh] object-contain rounded-lg`}
       />
 
       {hasMultiple && (
-        <div className="absolute bottom-5 md:bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs text-paper/80 tabular-nums">
+        <div className={`${backdropAnim} absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] md:bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs text-paper/90 bg-ink/60 px-3 py-1 rounded-full tabular-nums`}>
           {index + 1} / {images.length}
         </div>
       )}
@@ -265,7 +301,29 @@ function ProjectModal({
   onClose: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeTimerRef = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+
+  const requestClose = useCallback(() => {
+    if (isClosingRef.current) return;
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    isClosingRef.current = true;
+    if (reduced) {
+      onCloseRef.current();
+      return;
+    }
+    setIsClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      onCloseRef.current();
+    }, 180);
+  }, []);
 
   const galleryImages = useMemo(() => getGalleryImages(project), [project]);
   const paragraphs = useMemo(
@@ -278,12 +336,22 @@ function ProjectModal({
     document.body.style.overflow = 'hidden';
     closeButtonRef.current?.focus();
 
+    return () => {
+      if (closeTimerRef.current !== null) {
+        window.clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         if (lightboxIndex !== null) {
           setLightboxIndex(null);
         } else {
-          onClose();
+          requestClose();
         }
         return;
       }
@@ -297,45 +365,47 @@ function ProjectModal({
       }
     }
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onClose, lightboxIndex, galleryImages.length, dir]);
+  }, [requestClose, lightboxIndex, galleryImages.length, dir]);
 
-  return (
+  const modalContent = (
     <div
       dir={dir}
       role="dialog"
       aria-modal="true"
       aria-label={project.title}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:p-6 md:p-8"
     >
       <button
         type="button"
         aria-hidden="true"
         tabIndex={-1}
-        onClick={onClose}
-        className="absolute inset-0 bg-ink/60 backdrop-blur-sm"
+        onClick={requestClose}
+        className={`absolute inset-0 bg-ink/70 ${isClosing ? 'modal-backdrop-out' : 'modal-backdrop-in'}`}
       />
 
-      <div className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl bg-paper border border-ink/10 shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 p-5 md:p-6 bg-paper/95 backdrop-blur-sm border-b border-ink/10">
+      <div
+        className={`relative w-full max-w-3xl max-h-[calc(100dvh-1.5rem-env(safe-area-inset-top)-env(safe-area-inset-bottom))] sm:max-h-[85vh] overflow-y-auto overscroll-contain rounded-2xl bg-paper border border-ink/10 shadow-2xl ${
+          isClosing ? 'modal-panel-out' : 'modal-panel-in'
+        }`}
+      >
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 p-4 sm:p-5 md:p-6 bg-paper border-b border-ink/10">
           <div>
             <span className="font-mono text-xs text-accent font-medium">
               {typeLabel(project.type, labels)}
             </span>
-            <h3 className="font-display text-2xl md:text-3xl tracking-tightest mt-1">
+            <h3 className="font-display text-xl sm:text-2xl md:text-3xl tracking-tightest mt-1">
               {project.title}
             </h3>
           </div>
           <button
             ref={closeButtonRef}
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={labels.modal.close}
-            className="shrink-0 flex items-center justify-center h-9 w-9 rounded-full border border-ink/15 hover:border-ink/60 transition-colors duration-200"
+            className="shrink-0 flex items-center justify-center h-10 w-10 rounded-full border border-ink/20 hover:border-ink/60 transition-colors duration-200"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
@@ -348,7 +418,7 @@ function ProjectModal({
           </button>
         </div>
 
-        <div className="p-5 md:p-6 space-y-7">
+        <div className="p-4 sm:p-5 md:p-6 space-y-6 sm:space-y-7">
           {project.image && (
             <button
               type="button"
@@ -474,6 +544,9 @@ function ProjectModal({
       )}
     </div>
   );
+
+  if (typeof document === 'undefined') return null;
+  return createPortal(modalContent, document.body);
 }
 
 export default function WorkGrid({ lang }: { lang: Lang }) {
