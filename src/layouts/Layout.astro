@@ -15,19 +15,42 @@ interface Props {
   lang?: Lang;
   title: string;
   description: string;
+  subPath?: string;
+  ogType?: 'profile' | 'article' | 'website';
+  ogImage?: string;
+  ogImageAlt?: string;
+  showParticles?: boolean;
+  extraJsonLd?: Record<string, unknown>;
 }
 
-const { lang = 'en', title, description } = Astro.props;
+const {
+  lang = 'en',
+  title,
+  description,
+  subPath = '',
+  ogType = 'profile',
+  ogImage,
+  ogImageAlt,
+  showParticles = true,
+  extraJsonLd,
+} = Astro.props;
 const dir = lang === 'fa' ? 'rtl' : 'ltr';
 const siteOrigin = resolveSiteOrigin(Astro.url);
-const canonicalUrl = buildCanonicalUrl(siteOrigin, lang);
-const enUrl = buildCanonicalUrl(siteOrigin, 'en');
-const faUrl = buildCanonicalUrl(siteOrigin, 'fa');
-const portraitUrl = `${siteOrigin}/images/mohammad-pouhassani.jpg`;
+const canonicalUrl = buildCanonicalUrl(siteOrigin, lang, subPath);
+const enUrl = buildCanonicalUrl(siteOrigin, 'en', subPath);
+const faUrl = buildCanonicalUrl(siteOrigin, 'fa', subPath);
+const defaultPortraitUrl = `${siteOrigin}/images/mohammad-pouhassani.jpg`;
+const resolvedOgImage = ogImage
+  ? ogImage.startsWith('http')
+    ? ogImage
+    : `${siteOrigin}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`
+  : defaultPortraitUrl;
 const seoCopy = getSeoCopy(lang);
+const resolvedOgAlt = ogImageAlt ?? seoCopy.portraitAlt;
 const ogLocale = lang === 'fa' ? 'fa_IR' : 'en_US';
 const ogLocaleAlt = lang === 'fa' ? 'en_US' : 'fa_IR';
 const jsonLd = serializeSafeJsonLd(buildStructuredDataGraph(siteOrigin, lang));
+const extraSerializedJsonLd = extraJsonLd ? serializeSafeJsonLd(extraJsonLd) : null;
 ---
 
 <!doctype html>
@@ -62,47 +85,56 @@ const jsonLd = serializeSafeJsonLd(buildStructuredDataGraph(siteOrigin, lang));
     <link rel="alternate" hreflang="fa" href={faUrl} />
     <link rel="alternate" hreflang="x-default" href={enUrl} />
 
-    <meta property="og:type" content="profile" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={seoCopy.personName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:locale" content={ogLocale} />
     <meta property="og:locale:alternate" content={ogLocaleAlt} />
-    <meta property="og:image" content={portraitUrl} />
-    <meta property="og:image:secure_url" content={portraitUrl} />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="896" />
-    <meta property="og:image:height" content="1200" />
-    <meta property="og:image:alt" content={seoCopy.portraitAlt} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:secure_url" content={resolvedOgImage} />
+    {!ogImage && (
+      <>
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="896" />
+        <meta property="og:image:height" content="1200" />
+      </>
+    )}
+    <meta property="og:image:alt" content={resolvedOgAlt} />
     <meta property="profile:first_name" content="Mohammad" />
     <meta property="profile:last_name" content="Pouhassani" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={portraitUrl} />
-    <meta name="twitter:image:alt" content={seoCopy.portraitAlt} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:image:alt" content={resolvedOgAlt} />
 
     <meta name="theme-color" content="#F7F5F9" />
     <script type="application/ld+json" set:html={jsonLd} />
+    {extraSerializedJsonLd && (
+      <script type="application/ld+json" set:html={extraSerializedJsonLd} />
+    )}
   </head>
   <body>
-    <canvas
-      id="particle-stage"
-      data-testid="particle-stage"
-      aria-hidden="true"
-      class="fixed inset-0 w-full h-full z-[5] pointer-events-none block"
-    ></canvas>
-    <slot />
+    {showParticles && (
+      <canvas
+        id="particle-stage"
+        data-testid="particle-stage"
+        aria-hidden="true"
+        class="fixed inset-0 w-full h-full z-[5] pointer-events-none block"
+      ></canvas>
+    )}
     <script>
-      import { mountParticles } from '../scripts/particles';
-
       const canvas = document.getElementById('particle-stage') as HTMLCanvasElement | null;
       if (canvas) {
-        mountParticles(canvas);
+        import('../scripts/particles').then(({ mountParticles }) => {
+          mountParticles(canvas);
+        });
       }
     </script>
+    <slot />
     <Analytics />
     <SpeedInsights />
   </body>

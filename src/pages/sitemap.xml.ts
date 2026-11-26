@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { blogPosts } from '../data/blog';
 import { content } from '../i18n/content';
 import { buildCanonicalUrl, resolveSiteOrigin } from '../utils/seo';
 
@@ -15,6 +16,8 @@ export const GET: APIRoute = ({ url }) => {
   const origin = resolveSiteOrigin(url);
   const enUrl = buildCanonicalUrl(origin, 'en');
   const faUrl = buildCanonicalUrl(origin, 'fa');
+  const enBlogUrl = buildCanonicalUrl(origin, 'en', '/blog');
+  const faBlogUrl = buildCanonicalUrl(origin, 'fa', '/blog');
   const portraitLoc = `${origin}/images/mohammad-pouhassani.jpg`;
   const lastMod = new Date().toISOString().split('T')[0];
 
@@ -38,6 +41,42 @@ export const GET: APIRoute = ({ url }) => {
       <image:caption>${escapeXml(p.description)}</image:caption>
     </image:image>`,
     )
+    .join('\n');
+
+  const blogEntries = blogPosts
+    .map((post) => {
+      const enArticleUrl = buildCanonicalUrl(origin, 'en', `/blog/${post.slug}`);
+      const faArticleUrl = buildCanonicalUrl(origin, 'fa', `/blog/${post.slug}`);
+      const coverLoc = `${origin}${post.coverImage}`;
+      return `  <url>
+    <loc>${escapeXml(enArticleUrl)}</loc>
+    <lastmod>${post.publishedAt}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(enArticleUrl)}" />
+    <xhtml:link rel="alternate" hreflang="fa" href="${escapeXml(faArticleUrl)}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(enArticleUrl)}" />
+    <image:image>
+      <image:loc>${escapeXml(coverLoc)}</image:loc>
+      <image:title>${escapeXml(post.en.title)}</image:title>
+      <image:caption>${escapeXml(post.en.coverCaption)}</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>${escapeXml(faArticleUrl)}</loc>
+    <lastmod>${post.publishedAt}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(enArticleUrl)}" />
+    <xhtml:link rel="alternate" hreflang="fa" href="${escapeXml(faArticleUrl)}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(enArticleUrl)}" />
+    <image:image>
+      <image:loc>${escapeXml(coverLoc)}</image:loc>
+      <image:title>${escapeXml(post.fa.title)}</image:title>
+      <image:caption>${escapeXml(post.fa.coverCaption)}</image:caption>
+    </image:image>
+  </url>`;
+    })
     .join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -76,6 +115,25 @@ ${enProjectImages}
     </image:image>
 ${faProjectImages}
   </url>
+  <url>
+    <loc>${escapeXml(enBlogUrl)}</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(enBlogUrl)}" />
+    <xhtml:link rel="alternate" hreflang="fa" href="${escapeXml(faBlogUrl)}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(enBlogUrl)}" />
+  </url>
+  <url>
+    <loc>${escapeXml(faBlogUrl)}</loc>
+    <lastmod>${lastMod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(enBlogUrl)}" />
+    <xhtml:link rel="alternate" hreflang="fa" href="${escapeXml(faBlogUrl)}" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(enBlogUrl)}" />
+  </url>
+${blogEntries}
 </urlset>
 `;
 

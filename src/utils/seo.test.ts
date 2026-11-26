@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   DEFAULT_SITE_ORIGIN,
+  buildBlogPostStructuredData,
   buildCanonicalUrl,
   buildStructuredDataGraph,
   resolveSiteOrigin,
@@ -21,9 +22,17 @@ test('resolveSiteOrigin avoids localhost and prefers configured production origi
   );
 });
 
-test('buildCanonicalUrl returns / for English and /fa for Persian', () => {
+test('buildCanonicalUrl returns / for English, /fa for Persian, and handles sub-routes', () => {
   assert.equal(buildCanonicalUrl('https://me.tunetactics.ir/', 'en'), 'https://me.tunetactics.ir/');
   assert.equal(buildCanonicalUrl('https://me.tunetactics.ir/', 'fa'), 'https://me.tunetactics.ir/fa');
+  assert.equal(
+    buildCanonicalUrl('https://me.tunetactics.ir/', 'en', '/blog/introducing-astro-js'),
+    'https://me.tunetactics.ir/blog/introducing-astro-js',
+  );
+  assert.equal(
+    buildCanonicalUrl('https://me.tunetactics.ir/', 'fa', '/blog/introducing-astro-js'),
+    'https://me.tunetactics.ir/fa/blog/introducing-astro-js',
+  );
 });
 
 test('buildStructuredDataGraph exposes Person, ImageObject, and طراحی سایت metadata', () => {
@@ -33,6 +42,19 @@ test('buildStructuredDataGraph exposes Person, ImageObject, and طراحی سا�
   assert.match(serialized, /Pouhassani/);
   assert.match(serialized, /طراحی سایت/);
   assert.match(serialized, /mohammad-pouhassani\.jpg/);
+});
+
+test('buildBlogPostStructuredData outputs BlogPosting JSON-LD with author and cover image', () => {
+  const article = buildBlogPostStructuredData('https://me.tunetactics.ir', 'en', {
+    slug: 'introducing-astro-js',
+    title: 'Introducing Astro.js',
+    description: 'Overview of Islands Architecture.',
+    publishedAt: '2026-11-22',
+    coverImage: '/images/blog/astro-islands.jpg',
+  });
+  assert.equal(article['@type'], 'BlogPosting');
+  assert.equal(article.url, 'https://me.tunetactics.ir/blog/introducing-astro-js');
+  assert.equal(article.image, 'https://me.tunetactics.ir/images/blog/astro-islands.jpg');
 });
 
 test('serializeSafeJsonLd escapes HTML-sensitive characters to prevent script breakout', () => {

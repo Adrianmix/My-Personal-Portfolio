@@ -84,9 +84,13 @@ export function resolveSiteOrigin(
   return DEFAULT_SITE_ORIGIN;
 }
 
-export function buildCanonicalUrl(origin: string, lang: Lang): string {
+export function buildCanonicalUrl(origin: string, lang: Lang, subPath = ''): string {
   const base = origin.replace(/\/+$/, '');
-  return lang === 'fa' ? `${base}/fa` : `${base}/`;
+  const cleanSub = subPath ? `/${subPath.replace(/^\/+|\/+$/g, '')}` : '';
+  if (!cleanSub) {
+    return lang === 'fa' ? `${base}/fa` : `${base}/`;
+  }
+  return lang === 'fa' ? `${base}/fa${cleanSub}` : `${base}${cleanSub}`;
 }
 
 /**
@@ -235,5 +239,49 @@ export function buildStructuredDataGraph(origin: string, lang: Lang) {
         primaryImageOfPage: { '@id': portraitId },
       },
     ],
+  };
+}
+
+export function buildBlogPostStructuredData(
+  origin: string,
+  lang: Lang,
+  post: {
+    slug: string;
+    title: string;
+    description: string;
+    publishedAt: string;
+    coverImage: string;
+  },
+) {
+  const base = origin.replace(/\/+$/, '');
+  const copy = getSeoCopy(lang);
+  const articleUrl = buildCanonicalUrl(base, lang, `/blog/${post.slug}`);
+  const imageUrl = post.coverImage.startsWith('http')
+    ? post.coverImage
+    : `${base}${post.coverImage.startsWith('/') ? '' : '/'}${post.coverImage}`;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${articleUrl}#article`,
+    mainEntityOfPage: articleUrl,
+    url: articleUrl,
+    headline: post.title,
+    description: post.description,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    inLanguage: lang,
+    image: imageUrl,
+    author: {
+      '@type': 'Person',
+      '@id': `${base}/#person`,
+      name: copy.personName,
+      url: base,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: copy.personName,
+      url: base,
+    },
   };
 }

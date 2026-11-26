@@ -1,0 +1,21 @@
+---
+import BlogArticlePage from '../../../components/BlogArticlePage.astro';
+import { blogPosts, type BlogPost } from '../../../data/blog';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return blogPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+---
+
+<BlogArticlePage lang="fa" post={post} />
