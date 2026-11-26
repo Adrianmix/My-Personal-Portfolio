@@ -1,9 +1,19 @@
 export type Lang = 'en' | 'fa';
 
-export const CV_ASSET = {
-  url: '/assets/aistudio/Resume-Mohammad-Pouhassani_a74a479e.pdf',
-  filename: 'Mohammad-Pouhassani-CV.pdf',
-} as const;
+export const CV_ASSETS: Record<Lang, { url: string; filename: string }> = {
+  en: {
+    url: '/assets/Resume-Mohammad-Pouhassani-EN.pdf',
+    filename: 'Mohammad-Pouhassani-CV-EN.pdf',
+  },
+  fa: {
+    url: '/assets/aistudio/Resume-Mohammad-Pouhassani_a74a479e.pdf',
+    filename: 'Mohammad-Pouhassani-CV-FA.pdf',
+  },
+};
+
+export function getCvAsset(lang: Lang) {
+  return CV_ASSETS[lang];
+}
 
 export const content = {
   en: {

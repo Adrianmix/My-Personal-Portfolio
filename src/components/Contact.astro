@@ -1,5 +1,5 @@
 ---
-import { content, CV_ASSET, type Lang } from '../i18n/content';
+import { content, getCvAsset, type Lang } from '../i18n/content';
 
 interface Props {
   lang: Lang;
@@ -7,6 +7,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = content[lang];
+const cvAsset = getCvAsset(lang);
 const [line1, line2] = t.contact.titleLines;
 ---
 
@@ -47,8 +48,8 @@ const [line1, line2] = t.contact.titleLines;
       </div>
 
       <a
-        href={CV_ASSET.url}
-        download={CV_ASSET.filename}
+        href={cvAsset.url}
+        download={cvAsset.filename}
         aria-label={t.cv.ariaLabel}
         class="inline-flex items-center gap-2 text-xs font-medium bg-paper text-ink rounded-full px-4 py-2.5 hover:bg-accent hover:text-white transition-colors duration-200 whitespace-nowrap"
       >

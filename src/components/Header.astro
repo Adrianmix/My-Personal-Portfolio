@@ -1,5 +1,5 @@
 ---
-import { content, CV_ASSET, type Lang } from '../i18n/content';
+import { content, getCvAsset, type Lang } from '../i18n/content';
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
@@ -8,6 +8,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = content[lang];
+const cvAsset = getCvAsset(lang);
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 bg-paper border-b border-ink/10">
@@ -45,8 +46,8 @@ const t = content[lang];
       </a>
       <ThemeToggle lang={lang} />
       <a
-        href={CV_ASSET.url}
-        download={CV_ASSET.filename}
+        href={cvAsset.url}
+        download={cvAsset.filename}
         aria-label={t.cv.ariaLabel}
         class="inline-flex items-center gap-2 text-xs font-medium bg-accent text-white rounded-full px-4 py-2 hover:opacity-90 transition-opacity duration-200 whitespace-nowrap shrink-0"
       >
@@ -66,8 +67,8 @@ const t = content[lang];
     {/* Mobile action + drawer trigger */}
     <div class="flex lg:hidden items-center gap-2 shrink-0">
       <a
-        href={CV_ASSET.url}
-        download={CV_ASSET.filename}
+        href={cvAsset.url}
+        download={cvAsset.filename}
         aria-label={t.cv.ariaLabel}
         class="inline-flex items-center gap-1.5 text-xs font-medium bg-accent text-white rounded-full px-3.5 py-2 whitespace-nowrap shrink-0"
       >

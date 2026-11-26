@@ -1,5 +1,5 @@
 ---
-import { content, CV_ASSET, type Lang } from '../i18n/content';
+import { content, getCvAsset, type Lang } from '../i18n/content';
 
 interface Props {
   lang: Lang;
@@ -8,6 +8,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = content[lang];
 const exp = t.experience;
+const cvAsset = getCvAsset(lang);
 ---
 
 <section id="experience" class="scroll-mt-20 px-6 md:px-10 py-24 md:py-32 border-t border-ink/10">
@@ -26,8 +27,8 @@ const exp = t.experience;
           {exp.intro}
         </p>
         <a
-          href={CV_ASSET.url}
-          download={CV_ASSET.filename}
+          href={cvAsset.url}
+          download={cvAsset.filename}
           aria-label={t.cv.ariaLabel}
           class="inline-flex items-center gap-2 text-xs font-medium bg-ink text-paper rounded-full px-4 py-2.5 hover:bg-accent hover:text-white transition-colors duration-200 whitespace-nowrap shrink-0 self-start md:self-auto"
         >
