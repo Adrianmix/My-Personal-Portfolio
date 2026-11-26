@@ -1,6 +1,13 @@
 ---
 import '../styles/global.css';
 import type { Lang } from '../i18n/content';
+import {
+  buildCanonicalUrl,
+  buildStructuredDataGraph,
+  getSeoCopy,
+  resolveSiteOrigin,
+  serializeSafeJsonLd,
+} from '../utils/seo';
 
 interface Props {
   lang?: Lang;
@@ -10,6 +17,15 @@ interface Props {
 
 const { lang = 'en', title, description } = Astro.props;
 const dir = lang === 'fa' ? 'rtl' : 'ltr';
+const siteOrigin = resolveSiteOrigin(Astro.url);
+const canonicalUrl = buildCanonicalUrl(siteOrigin, lang);
+const enUrl = buildCanonicalUrl(siteOrigin, 'en');
+const faUrl = buildCanonicalUrl(siteOrigin, 'fa');
+const portraitUrl = `${siteOrigin}/images/mohammad-pouhassani.jpg`;
+const seoCopy = getSeoCopy(lang);
+const ogLocale = lang === 'fa' ? 'fa_IR' : 'en_US';
+const ogLocaleAlt = lang === 'fa' ? 'en_US' : 'fa_IR';
+const jsonLd = serializeSafeJsonLd(buildStructuredDataGraph(siteOrigin, lang));
 ---
 
 <!doctype html>
@@ -32,14 +48,42 @@ const dir = lang === 'fa' ? 'rtl' : 'ltr';
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={seoCopy.personName} />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="fa" href={faUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={seoCopy.personName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#F7F5F9" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+    <meta property="og:image" content={portraitUrl} />
+    <meta property="og:image:secure_url" content={portraitUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="896" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content={seoCopy.portraitAlt} />
+    <meta property="profile:first_name" content="Mohammad" />
+    <meta property="profile:last_name" content="Pouhassani" />
 
-    <link rel="alternate" hreflang="en" href="/" />
-    <link rel="alternate" hreflang="fa" href="/fa" />
-    <link rel="alternate" hreflang="x-default" href="/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={portraitUrl} />
+    <meta name="twitter:image:alt" content={seoCopy.portraitAlt} />
+
+    <meta name="theme-color" content="#F7F5F9" />
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
     <canvas

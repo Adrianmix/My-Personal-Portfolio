@@ -9,6 +9,7 @@ import {
   type ProjectItem,
   type ProjectType,
 } from '../utils/portfolio';
+import { sanitizeExternalUrl } from '../utils/seo';
 
 interface WorkGridLabels {
   webPreviewLabel: string;
@@ -60,7 +61,10 @@ function ProjectCard({
           <img
             src={project.image}
             alt={project.title}
+            width={1200}
+            height={750}
             loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-300 ease-out-quart group-hover:scale-[1.03]"
           />
         ) : (
@@ -107,9 +111,9 @@ function ProjectCard({
             <span aria-hidden="true">{dir === 'rtl' ? '←' : '→'}</span>
           </button>
 
-          {project.liveUrl && (
+          {sanitizeExternalUrl(project.liveUrl) && (
             <a
-              href={project.liveUrl}
+              href={sanitizeExternalUrl(project.liveUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="font-mono text-[11px] text-graphite hover:text-accent underline underline-offset-4 decoration-ink/20 hover:decoration-accent transition-colors duration-200"
@@ -416,11 +420,13 @@ function ProjectModal({
             )}
           </div>
 
-          {(project.liveUrl || project.githubUrl || project.caseStudyUrl) && (
+          {(sanitizeExternalUrl(project.liveUrl) ||
+            sanitizeExternalUrl(project.githubUrl) ||
+            sanitizeExternalUrl(project.caseStudyUrl)) && (
             <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-ink/10">
-              {project.liveUrl && (
+              {sanitizeExternalUrl(project.liveUrl) && (
                 <a
-                  href={project.liveUrl}
+                  href={sanitizeExternalUrl(project.liveUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-medium bg-accent text-white rounded-full px-4 py-2 hover:opacity-90 transition-opacity duration-200"
@@ -428,9 +434,9 @@ function ProjectModal({
                   {labels.liveDemo}
                 </a>
               )}
-              {project.githubUrl && (
+              {sanitizeExternalUrl(project.githubUrl) && (
                 <a
-                  href={project.githubUrl}
+                  href={sanitizeExternalUrl(project.githubUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-xs font-medium border border-ink/20 rounded-full px-4 py-2 hover:border-ink/60 transition-colors duration-200"
@@ -441,9 +447,9 @@ function ProjectModal({
                   {labels.modal.github}
                 </a>
               )}
-              {project.caseStudyUrl && (
+              {sanitizeExternalUrl(project.caseStudyUrl) && (
                 <a
-                  href={project.caseStudyUrl}
+                  href={sanitizeExternalUrl(project.caseStudyUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs font-medium underline underline-offset-4 decoration-ink/30 hover:decoration-accent px-1 py-2"

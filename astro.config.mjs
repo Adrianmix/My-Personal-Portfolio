@@ -4,6 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import node from '@astrojs/node';
 
 export default defineConfig({
+  site: 'https://me.tunetactics.ir',
   integrations: [
     react(),
     tailwind({ applyBaseStyles: false }),

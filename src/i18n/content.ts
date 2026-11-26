@@ -10,9 +10,9 @@ export const content = {
     dir: 'ltr' as const,
     htmlLang: 'en',
     meta: {
-      title: 'Mohammad Pouhassani — Designer & Front-End Developer',
+      title: 'Mohammad Pouhassani — Web Design & Front-End Developer',
       description:
-        'Web designer and front-end developer building fast, responsive interfaces with Astro, React, TypeScript, and WordPress. Available for freelance and full-time opportunities.',
+        'Portfolio of Mohammad Pouhassani — web designer and front-end developer crafting fast, SEO-ready sites with Astro, React, TypeScript, and WordPress.',
     },
     cv: {
       download: 'Download CV',
@@ -57,7 +57,7 @@ export const content = {
     },
     about: {
       eyebrow: 'About',
-      portraitAlt: 'Mohammad Pouhassani portrait',
+      portraitAlt: 'Mohammad Pouhassani — Web Designer and Front-End Developer portrait',
       portraitCaption: 'Mohammad Pouhassani, Designer & Front-End Developer',
       lead: "I've spent the last few years moving between two windows: a code editor on one side, design artboards on the other.",
       body: 'Born in July 1997 in North Khorasan, Iran, my curiosity for technology led me into Software Engineering and from there into web design and front-end development. I care deeply about typographic clarity, page speed, on-page SEO, and shipping interfaces that feel effortless on every screen.',
@@ -324,9 +324,9 @@ export const content = {
     dir: 'rtl' as const,
     htmlLang: 'fa',
     meta: {
-      title: 'محمد پوحسنی — طراح وب و توسعه‌دهنده فرانت‌اند',
+      title: 'محمد پوحسنی (Pouhassani) — طراحی سایت و توسعه فرانت‌اند',
       description:
-        'طراح وب و توسعه‌دهنده فرانت‌اند با تمرکز بر ساخت رابط‌های کاربری سریع، مدرن و واکنش‌گرا با Astro، React، TypeScript و وردپرس.',
+        'طراحی سایت اختصاصی، سریع و سئو‌شده با محمد پوحسنی (Pouhassani)؛ طراح وب و توسعه‌دهنده فرانت‌اند مسلط به Astro، React، TypeScript و وردپرس.',
     },
     cv: {
       download: 'دانلود رزومه',
@@ -371,7 +371,7 @@ export const content = {
     },
     about: {
       eyebrow: 'درباره من',
-      portraitAlt: 'پرتره محمد پوحسنی',
+      portraitAlt: 'محمد پوحسنی (Mohammad Pouhassani) — طراح سایت و توسعه‌دهنده فرانت‌اند',
       portraitCaption: 'محمد پوحسنی، طراح و توسعه‌دهنده فرانت‌اند',
       lead: 'چند سال اخیر را بین دو پنجره گذرانده‌ام: یک سمت ویرایشگر کد و سمت دیگر فایل‌های طراحی.',
       body: 'متولد تیرماه ۱۳۷۶ در خراسان شمالی هستم. علاقه‌ام به فناوری باعث شد رشته مهندسی نرم‌افزار را انتخاب کنم و از همان مسیر وارد دنیای طراحی و توسعه وب شوم. تمرکز من روی صفحات فرود، سرعت بارگذاری بالا، اصول سئو و رابط‌های کاربری تمیز و دقیق است.',
