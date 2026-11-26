@@ -8,6 +8,8 @@ import {
   resolveSiteOrigin,
   serializeSafeJsonLd,
 } from '../utils/seo';
+import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 
 interface Props {
   lang?: Lang;
@@ -101,5 +103,7 @@ const jsonLd = serializeSafeJsonLd(buildStructuredDataGraph(siteOrigin, lang));
         mountParticles(canvas);
       }
     </script>
+    <Analytics />
+    <SpeedInsights />
   </body>
 </html>
